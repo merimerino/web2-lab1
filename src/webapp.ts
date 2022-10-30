@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.set("views", path.join(__dirname, "views"));
 app.set('view engine', 'pug');
 
-const port = 4080;
+const port = process.env.PORT || 4080;
 const admin = "gylazuke@decabg.eu"
 let counter = 11;
 
