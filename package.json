@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "ts-node src/webapp.ts",
+    "start": "ts-node src/webapp.ts -a web2-lab1-results",
     "postinstall": "tsc"
   },
   "dependencies": {
