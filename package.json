@@ -1,5 +1,8 @@
 {
   "scripts": {
+    "build": "npm run clean; tsc; npm run copy-views; npm run copy-views",
+    "clean": "rm -rf dist",
+    "copy-views": "cp -r src/views/ dist/views/",
     "start": "node dist/webapp.js"
   },
   "dependencies": {

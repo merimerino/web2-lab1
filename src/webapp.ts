@@ -316,11 +316,7 @@ app.get("/sign-up", (req, res) => {
 
 if(externalURL){
   const hostname = '127.0.0.1';
-  https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert')
-  }, app)
-  .listen(port, hostname, function () {
+  app.listen(port, hostname, function () {
     console.log(`Server running at https://${hostname}:${port}/ and from outside on ${externalURL}`);
   });
 }else {
