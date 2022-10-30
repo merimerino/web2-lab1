@@ -4,9 +4,12 @@ import path from 'path'
 import https from 'https';
 import { auth, requiresAuth } from 'express-openid-connect'; 
 import dotenv from 'dotenv';
-import results from './data/results.json';
-import schedule from './data/schedule.json';
+import results1 from './data/results.json';
+import schedule1 from './data/schedule.json';
 import bodyParser from 'body-parser';
+
+var schedule = schedule1;
+var results = results1;
 
 
 
@@ -165,7 +168,7 @@ app.post('/addComment', function (req, res) {
         return r
       });
     schedule.schedule[matchID-1]=matchesComments
-    fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+    //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
     res.render("commentsSchedule", {username,matchID,finalSchedule,ranking,admin,email});
     return
     }
@@ -186,7 +189,7 @@ app.post('/addComment', function (req, res) {
       })
       counter++;
       schedule.schedule[matchID-1]=matchComments;
-      fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+      //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
     }    
     
     res.render("commentsSchedule", {username,matchID,finalSchedule,ranking,admin,email});}
@@ -201,7 +204,7 @@ app.post('/addResult', function (req, res) {
   let resultFiltered = results.overallranking.filter(x => x.nationalAssociation == newResult.nationalAssociation);
   if(resultFiltered.length){
     results.overallranking = results.overallranking.filter((r) => { return r.nationalAssociation !== resultFiltered[0].nationalAssociation});
-  fs.writeFileSync('results.json', JSON.stringify(results.overallranking, null, 2));
+  //fs.writeFileSync('results.json', JSON.stringify(results.overallranking, null, 2));
   }
 
   results.overallranking.push(newResult)
@@ -271,7 +274,7 @@ app.get('/commentsSchedule', requiresAuth(), function (req, res) {
   if(req.query.delete && req.query['matchID']){
     var i : number = +req.query['matchID'];
     schedule.schedule[i - 1].commentsSchedule = schedule.schedule[i - 1].commentsSchedule.filter(x =>  x.commentID != req.query.delete)
-    fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+    //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
 
   }
   let matchID = req.query.matchID;
@@ -293,7 +296,7 @@ app.post('/commentsSchedule', requiresAuth(), function (req, res) {
   if(req.query.delete && req.query['matchID']){
     var i : number = +req.query['matchID'];
     schedule.schedule[i - 1].commentsSchedule = schedule.schedule[i - 1].commentsSchedule.filter(x =>  x.commentID != req.query.delete)
-    fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+    //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
 
   }
   let matchID = req.query.matchID;
