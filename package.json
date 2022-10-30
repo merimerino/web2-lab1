@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "ts-node ./src/webapp.ts",
+    "start": "ts-node src/webapp.ts",
     "postinstall": "tsc"
   },
   "dependencies": {
