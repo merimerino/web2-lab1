@@ -168,6 +168,8 @@ app.post('/addComment', function (req, res) {
         return r
       });
     schedule.schedule[matchID-1]=matchesComments
+    console.log("IDEMO IZ ADD COMENtA");
+    console.log(schedule.schedule[0].commentsSchedule)
     //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
     res.render("commentsSchedule", {username,matchID,finalSchedule,ranking,admin,email});
     return
@@ -277,6 +279,7 @@ app.get('/commentsSchedule', requiresAuth(), function (req, res) {
     //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
 
   }
+  console.log(schedule.schedule[0].commentsSchedule)
   let matchID = req.query.matchID;
   let finalSchedule = schedule.schedule;
   let username : string | undefined;
@@ -287,25 +290,63 @@ app.get('/commentsSchedule', requiresAuth(), function (req, res) {
 });
 
 app.post('/commentsSchedule', requiresAuth(), function (req, res) { 
+  let content = req.body.content;
+  let finalSchedule = schedule.schedule
   let getuser : string | undefined;  
   getuser = JSON.stringify(req.oidc.user);
   let email = undefined;
-    if (getuser){    
-      let user = JSON.parse(getuser);
-      email = user.email}  
-  if(req.query.delete && req.query['matchID']){
-    var i : number = +req.query['matchID'];
-    schedule.schedule[i - 1].commentsSchedule = schedule.schedule[i - 1].commentsSchedule.filter(x =>  x.commentID != req.query.delete)
-    //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
-
-  }
-  let matchID = req.query.matchID;
-  let finalSchedule = schedule.schedule;
+  if (getuser){    
+    let user = JSON.parse(getuser);
+  email = user.email}
+  let ranking = results.overallranking;
   let username : string | undefined;
   if (req.oidc.isAuthenticated()) {
     username = req.oidc.user?.name ?? req.oidc.user?.sub;
+  }  
+  var matchID : number | undefined;
+
+
+  if(req.query['edit'] && req.query.edit!==undefined && req.query['matchID']){
+    matchID= +req.query['matchID'];
+    let commentID = req.query.edit;
+    let matchesComments = schedule.schedule[matchID-1]
+    let commentsFiltered = matchesComments.commentsSchedule.filter(x => x.commentID == commentID);
+    if(commentsFiltered.length){
+      matchesComments.commentsSchedule = matchesComments.commentsSchedule.map((r) => { 
+        if(r.commentID== commentID){
+          r.content = content;
+          r.time = new Date().toLocaleString();
+        }
+        return r
+      });
+    schedule.schedule[matchID-1]=matchesComments
+    console.log("IDEMO IZ ADD COMENtA");
+    console.log(schedule.schedule[0].commentsSchedule)
+    //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+    res.render("commentsSchedule", {username,matchID,finalSchedule,ranking,admin,email});
+    return
+    }
+
   }
-  res.render('commentsSchedule', {username,finalSchedule,matchID,admin, email}); 
+  else{
+
+    var matchID : number | undefined;
+    if(req.query['matchID']){
+      matchID= +req.query['matchID'];
+      let matchComments = schedule.schedule[matchID-1]
+      matchComments.commentsSchedule.push({
+        commentID:counter.toString(),
+        username:email,
+        time:new Date().toLocaleString(),
+        content: content
+
+      })
+      counter++;
+      schedule.schedule[matchID-1]=matchComments;
+      //fs.writeFileSync('schedule.json', JSON.stringify(schedule.schedule, null, 2));
+    }    
+    
+    res.render("commentsSchedule", {username,matchID,finalSchedule,ranking,admin,email});}
 });
 
 app.get("/sign-up", (req, res) => {
