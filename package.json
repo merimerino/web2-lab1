@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "build": "tsc && npm run copy-views && npm run copy-views",
     "clean": "if exist dist rmdir /s /q dist",
     "copy-views": "robocopy /mir /NFL /NDL /NJH /NJS /nc /ns /np src/views/ dist/views & exit 0",
     "dev": "nodemon",
@@ -21,5 +20,8 @@
     "connect-livereload": "^0.6.1",
     "livereload": "^0.9.3",
     "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": "16.18.0"
   }
 }
