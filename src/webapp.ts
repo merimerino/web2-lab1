@@ -18,7 +18,9 @@ app.use(bodyParser.json());
 app.set("views", path.join(__dirname, "views"));
 app.set('view engine', 'pug');
 
-const port = process.env.PORT || 4080;
+const externalURL = process.env.RENDER_EXTERNAL_URL;
+
+const port = externalURL && process.env.PORT ? parseInt(process.env.PORT) : 4080;
 const admin = "gylazuke@decabg.eu"
 let counter = 11;
 
@@ -26,7 +28,7 @@ const config = {
   authRequired : false,
   idpLogout : true, //login not only from the app, but also from identity provider
   secret: process.env.SECRET,
-  baseURL: `https://localhost:${port}`,
+  baseURL: externalURL || `https://localhost:${port}`,
   clientID: process.env.CLIENT_ID,
   issuerBaseURL: 'https://web2-labs.eu.auth0.com',
   clientSecret: process.env.CLIENT_SECRET,
@@ -312,10 +314,21 @@ app.get("/sign-up", (req, res) => {
   });
 });
 
-https.createServer({
+if(externalURL){
+  const hostname = '127.0.0.1';
+  https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert')
+  }, app)
+  .listen(port, hostname, function () {
+    console.log(`Server running at https://${hostname}:${port}/ and from outside on ${externalURL}`);
+  });
+}else {
+  https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')
   }, app)
   .listen(port, function () {
     console.log(`Server running at https://localhost:${port}/`);
   });
+}
